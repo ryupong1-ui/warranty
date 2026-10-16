@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ตรวจสอบประกันสินค้า</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Arial, Tahoma, sans-serif;
+  background: #f1f5f9;
+  color: #172033;
+}
+
+header {
+  background: #101827;
+  color: white;
+  padding: 28px 20px 55px;
+}
+
+.container {
+  width: min(760px, 92%);
+  margin: auto;
+}
+
+header h2 {
+  margin: 0 0 8px;
+}
+
+header p {
+  color: #cbd5e1;
+  margin: 0;
+}
+
+main {
+  margin-top: -30px;
+  margin-bottom: 40px;
+}
+
+.panel {
+  background: white;
+  padding: 25px;
+  border-radius: 18px;
+  box-shadow: 0 8px 30px #0000000a;
+}
+
+h1 {
+  font-size: 25px;
+  margin-top: 0;
+}
+
+.description {
+  color: #64748b;
+  line-height: 1.7;
+}
+
+form {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+input {
+  min-width: 0;
+  flex: 1;
+  padding: 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+button {
+  border: none;
+  background: #15803d;
+  color: white;
+  padding: 14px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+button:hover {
+  background: #166534;
+}
+
+.result {
+  margin-top: 22px;
+}
+
+.empty {
+  padding: 22px;
+  text-align: center;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  color: #64748b;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.status {
+  display: inline-block;
+  padding: 8px 13px;
+  border-radius: 30px;
+  background: #dcfce7;
+  color: #166534;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.expired {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.product {
+  margin: 20px 0;
+}
+
+.product h2 {
+  margin-bottom: 7px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.field {
+  padding: 15px;
+  border-radius: 12px;
+  background: #f8fafc;
+  overflow-wrap: anywhere;
+}
+
+.field span {
+  display: block;
+  color: #64748b;
+  font-size: 13px;
+  margin-bottom: 7px;
+}
+
+.field strong {
+  font-size: 15px;
+}
+
+.note {
+  margin-top: 20px;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+footer {
+  text-align: center;
+  color: #64748b;
+  font-size: 12px;
+  padding: 20px;
+}
+
+@media (max-width: 520px) {
+  form {
+    flex-direction: column;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .panel {
+    padding: 19px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="container">
+    <h2>🛡️ WARRANTY CHECK</h2>
+    <p>ระบบตรวจสอบการรับประกันสินค้า</p>
+  </div>
+</header>
+
+<main class="container">
+  <section class="panel">
+    <h1>ตรวจสอบประกันสินค้า</h1>
+
+    <div class="description">
+      กรอกเลขประกันเพื่อค้นหาข้อมูล หรือเปิดลิงก์โดยตรง เช่น
+      <b>AA123456789</b>
+    </div>
+
+    <form id="searchForm">
+      <input
+        id="warrantyNo"
+        placeholder="กรอกเลขประกันสินค้า"
+        autocomplete="off"
+      >
+      <button type="submit">ค้นหาประกัน</button>
+    </form>
+
+    <div id="result" class="result">
+      <div class="empty">
+        กรุณากรอกเลขประกันเพื่อค้นหาข้อมูล
+      </div>
+    </div>
+
+    <div class="note">
+      ข้อมูลแสดงตามรายการประกันที่ร้านค้ากำหนด
+      หากมีข้อสงสัย กรุณาติดต่อร้านค้าที่ระบุ
+    </div>
+  </section>
+</main>
+
+<footer>
+  Warranty Check · ระบบตรวจสอบประกันสินค้า
+</footer>
+
+<script>
+//NB Notebook
+//PH Phone
+//TB Tablet
+//WH Watch
+//OT Other
+const WARRANTIES = [
+  {
+    warrantyNo: "NB202600185",
+    productType: "battery",
+    brand: "ASUS",
+    model: "B31N1911",
+    store: "NewPowerShop (Shopee)",
+    warrantyStart: "2026-10-7",
+    warrantyEnd: "2027-10-7",
+    status: "มีประกัน",
+    note: ""
+  },
+  {
+    warrantyNo: "PH202600295",
+    productType: "screen",
+    brand: "Samsung",
+    model: "S21 FE",
+    store: "KAIKU_officialshop (Shopee)",
+    warrantyStart: "2026-10-10",
+    warrantyEnd: "2027-01-17",
+    status: "มีประกัน",
+    note: "จอแบรน Kaiku"
+  }
+];
+
+const form = document.getElementById("searchForm");
+const input = document.getElementById("warrantyNo");
+const result = document.getElementById("result");
+
+function searchWarranty(no) {
+  no = String(no || "").trim();
+
+  if (!no) {
+    result.innerHTML =
+      '<div class="empty">กรุณากรอกเลขประกันก่อนค้นหา</div>';
+    return;
+  }
+
+  const item = WARRANTIES.find(
+    x => x.warrantyNo.toLowerCase() === no.toLowerCase()
+  );
+
+  if (!item) {
+    result.innerHTML =
+      '<div class="empty">ไม่พบเลขประกัน ' +
+      no.replace(/[&<>"']/g, "") +
+      '<br>กรุณาตรวจสอบเลขประกันอีกครั้ง</div>';
+    return;
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const start = new Date(item.warrantyStart + "T00:00:00");
+  const end = new Date(item.warrantyEnd + "T00:00:00");
+
+  let status = item.status || "มีประกัน";
+  let color = "";
+
+  if (status === "ยกเลิก") {
+    status = "ยกเลิกประกัน";
+    color = "expired";
+  } else if (today < start) {
+    status = "ยังไม่เริ่มประกัน";
+    color = "pending";
+  } else if (today > end) {
+    status = "หมดประกัน";
+    color = "expired";
+  }
+
+  const safe = value =>
+    String(value || "-").replace(/[&<>"']/g, c => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[c]);
+
+  const date = value => {
+    const [y, m, d] = value.split("-").map(Number);
+    return new Date(y, m - 1, d).toLocaleDateString("th-TH", {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
+  };
+
+  result.innerHTML = `
+    <div class="status ${color}">${safe(status)}</div>
+    <div class="product">
+      <h2>${safe(item.brand)} ${safe(item.model)}</h2>
+      <p>เลขประกัน: ${safe(item.warrantyNo)}</p>
+    </div>
+    <div class="grid">
+      <div class="field">
+        <span>ประเภทสินค้า</span>
+        <strong>${safe(item.productType)}</strong>
+      </div>
+      <div class="field">
+        <span>ยี่ห้อ</span>
+        <strong>${safe(item.brand)}</strong>
+      </div>
+      <div class="field">
+        <span>รุ่น</span>
+        <strong>${safe(item.model)}</strong>
+      </div>
+      <div class="field">
+        <span>ร้านค้า</span>
+        <strong>${safe(item.store)}</strong>
+      </div>
+      <div class="field">
+        <span>วันเริ่มประกัน</span>
+        <strong>${date(item.warrantyStart)}</strong>
+      </div>
+      <div class="field">
+        <span>วันหมดประกัน</span>
+        <strong>${date(item.warrantyEnd)}</strong>
+      </div>
+    </div>
+  `;
+}
+
+form.addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  try {
+    searchWarranty(input.value);
+  } catch (error) {
+    result.innerHTML =
+      '<div class="empty">เกิดข้อผิดพลาด กรุณาตรวจสอบข้อมูลประกันในโค้ด</div>';
+    console.error(error);
+  }
+});
+
+// รองรับ URL เช่น domain.com/WAR-2026-001
+const path = location.pathname.split("/").filter(Boolean).pop();
+
+if (path && path.toLowerCase() !== "index.html") {
+  searchWarranty(decodeURIComponent(path));
+}
+
+</script>
+
+</body>
+</html>
